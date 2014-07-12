@@ -1,15 +1,20 @@
 'use strict';
 
+var debug = require('debug')('api');
+
 var Reol = require('reol');
 var Twitter = require('ntwitter');
 var nconf = require('nconf');
+var async = require('async');
+var request = require('request');
+var url = require('url');
 
 var articles = new Reol({
   id: true
 });
 
 
-/* Pre-fetch tweets
+/* Prefetch tweets
 ============================================================================= */
 
 var twitter = new Twitter({
@@ -19,12 +24,26 @@ var twitter = new Twitter({
   access_token_secret: nconf.get('access_token_secret')
 });
 
-twitter.get('/statuses/user_timeline.json', {
-  screen_name: nconf.get('screen_name'),
-  count: nconf.get('count') || 100
-}, function (err, result) {
-  //## Temp
-  articles = result;
+async.waterfall([
+  function (next) {
+    debug('Fetching tweets');
+
+    twitter.get('/statuses/user_timeline.json', {
+      screen_name: nconf.get('screen_name'),
+      count: nconf.get('count') || 100,
+      exclude_replies: true
+    }, next);
+  },
+  fetchArticles,
+  extractReponse,
+  formatArticles,
+  saveArticles
+], function (err) {
+  if(err) {
+    return debug('Error fetching articles', err);
+  }
+
+  debug('Done fetching initial tweets');
 });
 
 
@@ -40,12 +59,12 @@ exports.short = {
   get: function (options, callback) {
     var result = articles.slice(options.offset || 0, options.count || 20);
 
-    /*result = result.map(function (article) {
+    result = result.map(function (article) {
       return {
-        title: article.title,
-        excerpt: article.excerpt
+        id: article.id,
+        title: article.title
       };
-    });*/
+    });
 
     callback(null, result);
   }
@@ -53,8 +72,55 @@ exports.short = {
 
 exports.full = {
   getById: function (id, callback) {
-    callback(articles.find({
+    callback(null, articles.findOne({
       id: id
     }));
   }
 };
+
+
+/* Private helpers
+============================================================================= */
+
+function fetchArticles (tweets, callback) {
+  debug('Fetching articles');
+
+  async.mapLimit(tweets, nconf.get('request_limit') || 5, function (tweet, next) {
+    var linkUrl, apiUrl, articleId;
+
+    try {
+      // Throws if the tweet doesn't contain a url
+      linkUrl = tweet.entities.urls[0].expanded_url;
+    }
+    catch (e) {
+      debug('Error: no url found in tweet', tweet.text);
+      return next();
+    }
+
+    articleId = url.parse(linkUrl).path.split('/').slice(-1).join('');
+    apiUrl = nconf.get('api_url') + '/articles/' + articleId;
+
+    request(apiUrl, next);
+  }, callback);
+}
+
+function extractReponse (responses, callback) {
+  callback(null, responses.filter(Boolean).map(function (response) {
+    return JSON.parse(response.body);
+  }));
+}
+
+function formatArticles (articles, callback) {
+  callback(null, articles.map(function (article) {
+    return {
+      id: article.id,
+      title: article.title,
+      resources: article.resources
+    };
+  }));
+}
+
+function saveArticles (items, callback) {
+  articles.push.apply(articles, items);
+  callback();
+}
