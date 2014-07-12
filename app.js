@@ -1,7 +1,6 @@
 'use strict';
 
 var express = require('express');
-var path = require('path');
 var logger = require('morgan');
 var nconf = require('nconf');
 var app = express();
@@ -31,6 +30,9 @@ app.use(function(req, res, next) {
 // will print stacktrace
 if (app.get('env') === 'development') {
     app.use(function(err, req, res, next) {
+        /*jshint-hack*/
+        void(next);
+
         res.status(err.status || 500);
         res.json({
             message: err.message,
@@ -42,6 +44,9 @@ if (app.get('env') === 'development') {
 // production error handler
 // no stacktraces leaked to user
 app.use(function(err, req, res, next) {
+    /*jshint-hack*/
+    void(next);
+
     res.status(err.status || 500);
     res.json({
         message: err.message,
