@@ -29,7 +29,7 @@ async.waterfall([
     debug('Fetching tweets');
 
     twitter.get('/statuses/user_timeline.json', {
-      screen_name: nconf.get('screen_name'),
+      user_id: nconf.get('user_id'),
       count: nconf.get('count') || 100,
       exclude_replies: true
     }, next);
@@ -49,7 +49,29 @@ async.waterfall([
 
 /* Listen for new tweets
 ============================================================================= */
-// stream.on('tweet', fetchArticle(.., formatArticles(.., saveArticles())))
+
+twitter.stream('/statuses/filter', {
+  follow: [nconf.get('user_id')]
+}, function (stream) {
+  stream.on('data', function (data) {
+    debug('data!', data);
+
+    async.waterfall([
+      fetchArticles.bind(null, [data]),
+      extractReponse,
+      formatArticles,
+      saveArticles
+    ], function (err) {
+      if(err) {
+        return debug('Error saving streamed tweet');
+      }
+
+      debug('New tweet saved');
+    });
+  });
+
+  stream.on('error', debug.bind(null, 'Tweet stream error'));
+});
 
 
 /* Public API
