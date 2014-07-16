@@ -4,6 +4,15 @@ var express = require('express');
 var router = express.Router();
 var articles = require('../models/articles');
 
+router.use(function (req, res, next) {
+  res.set({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET'
+  });
+
+  next();
+});
+
 router.get('/', function(req, res, next) {
   articles.short.get({
     count: req.query.count,
