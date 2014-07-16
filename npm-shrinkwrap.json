@@ -7,6 +7,10 @@
       "from": "async@",
       "resolved": "https://registry.npmjs.org/async/-/async-0.9.0.tgz"
     },
+    "cookies": {
+      "version": "0.1.6",
+      "from": "cookies@0.1.6"
+    },
     "debug": {
       "version": "0.7.4",
       "from": "debug@~0.7.4",
@@ -27,10 +31,6 @@
           "from": "accepts@1.0.1",
           "resolved": "https://registry.npmjs.org/accepts/-/accepts-1.0.1.tgz",
           "dependencies": {
-            "mime": {
-              "version": "1.2.11",
-              "from": "mime@~1.2.11"
-            },
             "negotiator": {
               "version": "0.4.7",
               "from": "negotiator@~0.4.0",
@@ -41,13 +41,7 @@
         "type-is": {
           "version": "1.1.0",
           "from": "type-is@~1.1.0",
-          "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.1.0.tgz",
-          "dependencies": {
-            "mime": {
-              "version": "1.2.11",
-              "from": "mime@~1.2.11"
-            }
-          }
+          "resolved": "https://registry.npmjs.org/type-is/-/type-is-1.1.0.tgz"
         },
         "range-parser": {
           "version": "1.0.0",
@@ -82,10 +76,6 @@
             "debug": {
               "version": "0.8.0",
               "from": "debug@0.8.0"
-            },
-            "mime": {
-              "version": "1.2.11",
-              "from": "mime@~1.2.11"
             }
           }
         },
@@ -109,10 +99,6 @@
           "from": "escape-html@1.0.1",
           "resolved": "https://registry.npmjs.org/escape-html/-/escape-html-1.0.1.tgz"
         },
-        "qs": {
-          "version": "0.6.6",
-          "from": "qs@~0.6.6"
-        },
         "serve-static": {
           "version": "1.1.0",
           "from": "serve-static@1.1.0",
@@ -128,6 +114,26 @@
           "from": "debug@0.8.1"
         }
       }
+    },
+    "immortal-ntwitter": {
+      "version": "0.0.9",
+      "from": "git://github.com/horixon/immortal-ntwitter.git",
+      "resolved": "git://github.com/horixon/immortal-ntwitter.git#a9c2477a9f54e4e4994f72bd246a55759bd44e93",
+      "dependencies": {
+        "ntwitter": {
+          "version": "0.5.0",
+          "from": "ntwitter@git://github.com/horixon/ntwitter.git#master",
+          "resolved": "git://github.com/horixon/ntwitter.git#0fcb79f4d4e14905a686c9c6cf2091bb05704bdc"
+        }
+      }
+    },
+    "keygrip": {
+      "version": "0.2.4",
+      "from": "keygrip@0.2.4"
+    },
+    "mime": {
+      "version": "1.2.11",
+      "from": "mime@1.2.11"
     },
     "morgan": {
       "version": "1.0.1",
@@ -175,22 +181,16 @@
     },
     "ntwitter": {
       "version": "0.5.0",
-      "from": "ntwitter@",
-      "dependencies": {
-        "oauth": {
-          "version": "0.9.12",
-          "from": "oauth@>=0.8.4",
-          "resolved": "https://registry.npmjs.org/oauth/-/oauth-0.9.12.tgz"
-        },
-        "cookies": {
-          "version": "0.1.6",
-          "from": "cookies@0.1.x"
-        },
-        "keygrip": {
-          "version": "0.2.4",
-          "from": "keygrip@0.2.x"
-        }
-      }
+      "from": "ntwitter@"
+    },
+    "oauth": {
+      "version": "0.9.12",
+      "from": "oauth@0.9.12",
+      "resolved": "https://registry.npmjs.org/oauth/-/oauth-0.9.12.tgz"
+    },
+    "qs": {
+      "version": "0.6.6",
+      "from": "qs@0.6.6"
     },
     "reol": {
       "version": "0.2.2",
@@ -201,10 +201,6 @@
       "from": "request@",
       "resolved": "https://registry.npmjs.org/request/-/request-2.37.0.tgz",
       "dependencies": {
-        "qs": {
-          "version": "0.6.6",
-          "from": "qs@~0.6.0"
-        },
         "json-stringify-safe": {
           "version": "5.0.0",
           "from": "json-stringify-safe@~5.0.0"
@@ -249,10 +245,6 @@
                   "resolved": "https://registry.npmjs.org/delayed-stream/-/delayed-stream-0.0.5.tgz"
                 }
               }
-            },
-            "mime": {
-              "version": "1.2.11",
-              "from": "mime@~1.2.11"
             }
           }
         },

@@ -3,7 +3,7 @@
 var debug = require('debug')('api');
 
 var Reol = require('reol');
-var Twitter = require('ntwitter');
+var Twitter = require('immortal-ntwitter');
 var nconf = require('nconf');
 var async = require('async');
 var request = require('request');
@@ -50,7 +50,7 @@ async.waterfall([
 /* Listen for new tweets
 ============================================================================= */
 
-twitter.stream('/statuses/filter', {
+twitter.stream('statuses/filter', {
   follow: [nconf.get('user_id')]
 }, function (stream) {
   stream.on('data', function (data) {
@@ -68,6 +68,14 @@ twitter.stream('/statuses/filter', {
 
       debug('New tweet saved');
     });
+  });
+
+  stream.on('end', function () {
+    console.time('Twitter stream end');
+  });
+
+  stream.on('destroy', function () {
+    console.time('Twitter stream destroy');
   });
 
   stream.on('error', debug.bind(null, 'Tweet stream error'));
@@ -143,6 +151,6 @@ function formatArticles (articles, callback) {
 }
 
 function saveArticles (items, callback) {
-  articles.push.apply(articles, items);
+  articles.unshift.apply(articles, items);
   callback();
 }
